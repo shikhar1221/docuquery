@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config'
 import { AuthModule } from '../modules/auth/auth.module'
 import { UserManagementModule } from './userManagement/userManagement.module'
 import { DocumentModule } from './document/document.module';
+import { IngestionModule } from './ingestion/ingestion.module';
 
 @Module({
   imports: [
@@ -24,7 +25,8 @@ import { DocumentModule } from './document/document.module';
       }),
       AuthModule,
       UserManagementModule,
-      DocumentModule
+      DocumentModule,
+      IngestionModule
   ],
   controllers: [],
   providers: [],
