@@ -11,7 +11,7 @@ async function bootstrap() {
 
   // Enable CORS if needed
   app.enableCors({
-    origin: process.env.CORS_ORIGIN,
+    origin: true,
   })
 
   // Use Helmet to secure the app by setting various HTTP headers
@@ -29,7 +29,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: true,
+      forbidNonWhitelisted: false,
       transform: true,
     }),
   )

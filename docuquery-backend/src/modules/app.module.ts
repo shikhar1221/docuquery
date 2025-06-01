@@ -5,6 +5,7 @@ import { AuthModule } from '../modules/auth/auth.module'
 import { UserManagementModule } from './userManagement/userManagement.module'
 import { DocumentModule } from './document/document.module';
 import { IngestionModule } from './ingestion/ingestion.module';
+import { LoggerModule } from '../common/logger/logger.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { IngestionModule } from './ingestion/ingestion.module';
           autoLoadEntities: true,
         }),
       }),
+      LoggerModule,
       AuthModule,
       UserManagementModule,
       DocumentModule,

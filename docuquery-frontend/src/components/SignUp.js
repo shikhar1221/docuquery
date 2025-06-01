@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { TextField, Button, Select, MenuItem, FormControl, InputLabel, CircularProgress, Typography, Container, Paper } from '@mui/material';
+import { authService } from '../services/api';
 
 function SignUp() {
   const [formData, setFormData] = useState({
@@ -9,6 +10,8 @@ function SignUp() {
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState('');
+  const [submitSuccess, setSubmitSuccess] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -24,6 +27,10 @@ function SignUp() {
         [name]: ''
       });
     }
+    
+    // Clear submit error/success when user makes changes
+    if (submitError) setSubmitError('');
+    if (submitSuccess) setSubmitSuccess(false);
   };
 
   const validateForm = () => {
@@ -47,17 +54,55 @@ function SignUp() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (validateForm()) {
       setIsSubmitting(true);
-      // Simulate API call
-      setTimeout(() => {
-        console.log('Form submitted:', formData);
+      setSubmitError('');
+      
+      try {
+        // Convert role to expected format
+        const userData = {
+          email: formData.email,
+          password: formData.password,
+          roles: [formData.role.toLowerCase()]
+        };
+        
+        // Add debug logging
+        console.log('Sending registration data:', userData);
+        
+        // Call register API
+        await authService.register(userData);
+        
+        // Show success message
+        setSubmitSuccess(true);
+        
+        // Reset form
+        setFormData({
+          email: '',
+          password: '',
+          role: 'Viewer'
+        });
+      } catch (error) {
+        console.error('Registration error:', error);
+        
+        // Enhanced error logging
+        if (typeof error === 'object') {
+          console.log('Error details:', JSON.stringify(error, null, 2));
+        }
+        
+        // Display more specific error message if available
+        if (error.message) {
+          setSubmitError(error.message);
+        } else if (typeof error === 'string') {
+          setSubmitError(error);
+        } else {
+          setSubmitError('Registration failed. Please try again.');
+        }
+      } finally {
         setIsSubmitting(false);
-        // Here you would typically redirect or show success message
-      }, 1500);
+      }
     }
   };
 
@@ -90,6 +135,22 @@ function SignUp() {
             <Typography variant="h4" align="center" className="mb-6 font-bold text-gray-800">
               Create your account
             </Typography>
+            
+            {submitSuccess && (
+              <div className="mb-4 p-3 bg-green-100 text-green-800 rounded-lg">
+                <Typography variant="body1">
+                  Registration successful! You can now sign in with your credentials.
+                </Typography>
+              </div>
+            )}
+            
+            {submitError && (
+              <div className="mb-4 p-3 bg-red-100 text-red-800 rounded-lg">
+                <Typography variant="body1">
+                  {submitError}
+                </Typography>
+              </div>
+            )}
             
             <form onSubmit={handleSubmit} className="space-y-4">
               <FormControl fullWidth error={!!errors.email}>

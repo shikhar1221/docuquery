@@ -7,43 +7,67 @@ import { RegisterDto } from './dto/register.dto'
 import { LoginDto } from './dto/login.dto'
 import { UserEntity } from '../../common/entities/user.entity'
 import { Role, DEFAULT_PERMISSIONS } from '../../common/enums/roles.enum'
+import { LoggerService } from '../../common/logger/logger.service'
 
 @Injectable()
 export class AuthService {
+  private readonly logger: LoggerService;
+
   constructor(
     private readonly userRepository: UserRepository,
     private readonly tokenRepository: TokenRepository,
     private readonly jwtService: JwtService,
-  ) {}
+  ) {
+    this.logger = new LoggerService('AuthService');
+  }
 
   //Function to register a new user with default permissions.
   async register(registerDto: RegisterDto): Promise<UserEntity> {
+    this.logger.log(`Registering new user with email: ${registerDto.email}`);
+    this.logger.debug(`Registration data: ${JSON.stringify(registerDto)}`);
+    
     const hashedPassword = await bcrypt.hash(registerDto.password, 10)
-    const user = await this.userRepository.createUser({
-      ...registerDto,
-      password: hashedPassword,
-      roles: registerDto.roles as Role[],
-      permissions: Object.fromEntries(
-        DEFAULT_PERMISSIONS[registerDto.roles[0]].map((permission) => [permission, true]),
-      ),
-    })
-    return user
+    
+    try {
+      const user = await this.userRepository.createUser({
+        ...registerDto,
+        password: hashedPassword,
+        roles: registerDto.roles,
+        permissions: Object.fromEntries(
+          DEFAULT_PERMISSIONS[registerDto.roles[0]].map((permission) => [permission, true]),
+        ),
+      })
+      this.logger.log(`User registered successfully: ${user.id}`);
+      return user;
+    } catch (error: any) {
+      this.logger.error(`Failed to register user: ${error.message || 'Unknown error'}`, error.stack || '');
+      throw error;
+    }
   }
 
   //Function to update the permissions of a user.
   async updatePermissions(userId: string, permissions: Record<string, boolean>): Promise<UserEntity> {
+    this.logger.log(`Updating permissions for user: ${userId}`);
+    
     const user = await this.userRepository.findOneById(userId)
     if (!user) {
+      this.logger.warn(`User not found for permission update: ${userId}`);
       throw new NotFoundException('User not found')
     }
+    
     user.permissions = permissions
-    return this.userRepository.repository.save(user)
+    const updatedUser = await this.userRepository.repository.save(user);
+    this.logger.log(`Permissions updated for user: ${userId}`);
+    return updatedUser;
   }
 
   async login(loginDto: LoginDto): Promise<{ accessToken: string; refreshToken: string }> {
+    this.logger.log(`Login attempt for user: ${loginDto.email}`);
+    
     const user = await this.userRepository.findByEmail(loginDto.email)
 
     if (!user || !(await bcrypt.compare(loginDto.password, user.password))) {
+      this.logger.warn(`Failed login attempt for user: ${loginDto.email}`);
       throw new UnauthorizedException('Invalid credentials')
     }
 
@@ -60,7 +84,8 @@ export class AuthService {
 
     // Create refresh token
     const refreshToken = await this.tokenRepository.createRefreshToken(user)
-
+    
+    this.logger.log(`User logged in successfully: ${user.id}`);
     return { accessToken, refreshToken: refreshToken.token }
   }
 
