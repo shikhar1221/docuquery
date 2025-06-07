@@ -40,6 +40,7 @@ export const authService = {
       // Store tokens in localStorage
       localStorage.setItem('accessToken', response.data.accessToken);
       localStorage.setItem('refreshToken', response.data.refreshToken);
+      localStorage.setItem('user', {email:credentials.email});
       return response.data;
     } catch (error) {
       throw error.response?.data || error.message;

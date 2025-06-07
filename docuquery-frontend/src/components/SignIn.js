@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import { TextField, Button, Select, MenuItem, FormControl, InputLabel, CircularProgress, Typography, Container, Paper } from '@mui/material';
+import { TextField, Button, CircularProgress, Typography, Container, Paper } from '@mui/material';
 import { authService } from '../services/api';
 import { Link, useNavigate } from 'react-router-dom';
 
-function SignUp() {
+function SignIn() {
   const [formData, setFormData] = useState({
     email: '',
-    password: '',
-    role: 'Viewer'
+    password: ''
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -48,8 +47,6 @@ function SignUp() {
     // Password validation
     if (!formData.password) {
       newErrors.password = 'Password is required';
-    } else if (formData.password.length < 6) {
-      newErrors.password = 'Password must be at least 6 characters';
     }
     
     setErrors(newErrors);
@@ -64,40 +61,30 @@ function SignUp() {
       setSubmitError('');
       
       try {
-        // Convert role to expected format
-        const userData = {
+        const credentials = {
           email: formData.email,
-          password: formData.password,
-          roles: [formData.role.toLowerCase()]
+          password: formData.password
         };
         
-        // Add debug logging
-        console.log('Sending registration data:', userData);
-        
-        // Call register API
-        await authService.register(userData);
+        // Call login API
+        const response = await authService.login(credentials);
         
         // Show success message
         setSubmitSuccess(true);
+        console.log('Login successful:', response);
         
-        // Reset form
-        setFormData({
-          email: '',
-          password: '',
-          role: 'Viewer'
-        });
-        
-        // Redirect to sign in page after a delay
-        setTimeout(() => {
-          navigate('/signin');
-        }, 2000);
-      } catch (error) {
-        console.error('Registration error:', error);
-        
-        // Enhanced error logging
-        if (typeof error === 'object') {
-          console.log('Error details:', JSON.stringify(error, null, 2));
+        // Store user info if available
+        if (response.user) {
+          localStorage.setItem('user', JSON.stringify(response.user));
         }
+        
+        // Use React Router navigation instead of page reload
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1500);
+        
+      } catch (error) {
+        console.error('Login error:', error);
         
         // Display more specific error message if available
         if (error.message) {
@@ -105,7 +92,7 @@ function SignUp() {
         } else if (typeof error === 'string') {
           setSubmitError(error);
         } else {
-          setSubmitError('Registration failed. Please try again.');
+          setSubmitError('An error occurred during sign in. Please try again.');
         }
       } finally {
         setIsSubmitting(false);
@@ -140,13 +127,13 @@ function SignUp() {
         <Container maxWidth="sm" className="py-8">
           <Paper elevation={3} className="p-6 bg-white/90 backdrop-blur-sm rounded-xl shadow-lg">
             <Typography variant="h4" align="center" className="mb-6 font-bold text-gray-800">
-              Create your account
+              Sign in to your account
             </Typography>
             
             {submitSuccess && (
               <div className="mb-4 p-3 bg-green-100 text-green-800 rounded-lg">
                 <Typography variant="body1">
-                  Registration successful! Redirecting to sign in page...
+                  Sign in successful! Redirecting you to dashboard...
                 </Typography>
               </div>
             )}
@@ -160,66 +147,46 @@ function SignUp() {
             )}
             
             <form onSubmit={handleSubmit} className="space-y-4">
-              <FormControl fullWidth error={!!errors.email}>
-                <TextField
-                  label="Email"
-                  name="email"
-                  type="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  error={!!errors.email}
-                  helperText={errors.email}
-                  placeholder="Your email address"
-                  variant="outlined"
-                  className="rounded-lg"
-                  InputProps={{
-                    className: 'rounded-lg',
-                  }}
-                  fullWidth
-                />
-              </FormControl>
+              <TextField
+                fullWidth
+                label="Email Address"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                error={!!errors.email}
+                helperText={errors.email}
+                disabled={isSubmitting}
+                required
+                className="rounded-lg"
+                InputProps={{
+                  className: 'rounded-lg',
+                }}
+              />
               
-              <FormControl fullWidth error={!!errors.password}>
-                <TextField
-                  label="Password"
-                  name="password"
-                  type="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  error={!!errors.password}
-                  helperText={errors.password}
-                  placeholder="Create a password"
-                  variant="outlined"
-                  className="rounded-lg"
-                  InputProps={{
-                    className: 'rounded-lg',
-                  }}
-                  fullWidth
-                />
-              </FormControl>
-              
-              <FormControl fullWidth variant="outlined">
-                <InputLabel id="role-label">Role</InputLabel>
-                <Select
-                  labelId="role-label"
-                  name="role"
-                  value={formData.role}
-                  onChange={handleChange}
-                  label="Role"
-                  className="rounded-lg"
-                >
-                  <MenuItem value="Admin">Admin</MenuItem>
-                  <MenuItem value="Viewer">Viewer</MenuItem>
-                  <MenuItem value="Editor">Editor</MenuItem>
-                </Select>
-              </FormControl>
+              <TextField
+                fullWidth
+                label="Password"
+                name="password"
+                type="password"
+                value={formData.password}
+                onChange={handleChange}
+                error={!!errors.password}
+                helperText={errors.password}
+                disabled={isSubmitting}
+                required
+                className="rounded-lg"
+                InputProps={{
+                  className: 'rounded-lg',
+                }}
+              />
               
               <Button
                 type="submit"
+                fullWidth
                 variant="contained"
                 color="primary"
                 disabled={isSubmitting}
-                fullWidth
                 className="mt-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 shadow-md hover:shadow-lg transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98]"
               >
                 {isSubmitting ? (
@@ -227,15 +194,15 @@ function SignUp() {
                     <CircularProgress size={20} color="inherit" className="mr-2" />
                     Processing...
                   </>
-                ) : 'Sign Up'}
+                ) : 'Sign In'}
               </Button>
             </form>
             
             <div className="mt-4 text-center">
               <Typography variant="body2">
-                Already have an account?{' '}
-                <Link to="/signin" className="text-blue-600 hover:text-blue-800">
-                  Sign in
+                Don't have an account?{' '}
+                <Link to="/signup" className="text-blue-600 hover:text-blue-800">
+                  Sign up
                 </Link>
               </Typography>
             </div>
@@ -246,4 +213,4 @@ function SignUp() {
   );
 }
 
-export default SignUp;
+export default SignIn;
