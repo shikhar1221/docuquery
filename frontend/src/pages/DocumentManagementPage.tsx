@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import { useDocuments } from '../hooks/useDocuments';
 import type { Document, CreateDocumentDto } from '../types/document';
 import { Button, Table, Modal, Form, Input, Upload, message, Space, Tag } from 'antd';
-import { UploadOutlined, DeleteOutlined, EditOutlined, DownloadOutlined } from '@ant-design/icons';
+import { UploadOutlined, DeleteOutlined, EditOutlined, DownloadOutlined, FileTextOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { useSessionStore } from '../store/session';
+import { IngestionStatus } from '../components/documents/IngestionStatus';
+import { ingestionApi } from '../api/ingestion';
 
 interface FormValues {
   title: string;
@@ -70,6 +72,19 @@ const DocumentManagementPage: React.FC = () => {
     }
   };
 
+  const handleDownload = (id: number) => {
+    // Implementation of handleDownload function
+  };
+
+  const handleIngest = async (id: number) => {
+    try {
+      await ingestionApi.startIngestion(id);
+      message.success('Document ingestion started');
+    } catch (err) {
+      message.error('Failed to start document ingestion');
+    }
+  };
+
   const columns = [
     {
       title: 'Title',
@@ -99,22 +114,11 @@ const DocumentManagementPage: React.FC = () => {
       render: (date: string) => new Date(date).toLocaleDateString(),
     },
     {
-      title: 'Status',
-      dataIndex: 'ingestionStatus',
+      title: 'Ingestion Status',
       key: 'ingestionStatus',
-      render: (status: string) => {
-        const statusColors = {
-          pending: 'warning',
-          processing: 'processing',
-          completed: 'success',
-          failed: 'error',
-        };
-        return status ? (
-          <Tag color={statusColors[status as keyof typeof statusColors]}>
-            {status.toUpperCase()}
-          </Tag>
-        ) : null;
-      },
+      render: (_: unknown, record: Document) => (
+        <IngestionStatus documentId={record.id} />
+      ),
     },
     {
       title: 'Actions',
@@ -131,16 +135,29 @@ const DocumentManagementPage: React.FC = () => {
               });
               setIsEditModalVisible(true);
             }}
-          />
+          >
+            Edit
+          </Button>
           <Button
             icon={<DeleteOutlined />}
             danger
             onClick={() => handleDelete(record.id)}
-          />
+          >
+            Delete
+          </Button>
           <Button
             icon={<DownloadOutlined />}
-            onClick={() => window.open(`/api/documents/${record.id}/download`, '_blank')}
-          />
+            onClick={() => handleDownload(record.id)}
+          >
+            Download
+          </Button>
+          <Button
+            icon={<FileTextOutlined />}
+            type="primary"
+            onClick={() => handleIngest(record.id)}
+          >
+            Ingest
+          </Button>
         </Space>
       ),
     },
@@ -150,13 +167,15 @@ const DocumentManagementPage: React.FC = () => {
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Document Management</h1>
-        <Button
-          type="primary"
-          onClick={() => setIsUploadModalVisible(true)}
-          icon={<UploadOutlined />}
+        <Upload
+          customRequest={handleUpload}
+          showUploadList={false}
+          accept=".pdf,.doc,.docx,.txt"
         >
-          Upload Document
-        </Button>
+          <Button icon={<UploadOutlined />} type="primary">
+            Upload Document
+          </Button>
+        </Upload>
       </div>
 
       {error && (
