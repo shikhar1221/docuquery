@@ -1,51 +1,42 @@
-import { apiClient } from './apiClient';
+import { apiClient } from './client';
 
-export enum IngestionStatusEnum {
-  PENDING = 'PENDING',
-  PROCESSING = 'PROCESSING',
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-}
-
-export interface IngestionMetadata {
-  retryCount: number;
-  startTime: string;
-  lastChecked?: string;
-  lastRetry?: string;
-  fileName?: string;
-  filePath?: string;
-  mimeType?: string;
-  size?: number;
-  pageCount?: number;
-  wordCount?: number;
-  language?: string;
-  processedAt?: string;
-}
+export type IngestionStatusType = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';
 
 export interface IngestionStatus {
   id: number;
   documentId: number;
-  status: IngestionStatusEnum;
-  error?: string | null;
-  metadata?: IngestionMetadata;
+  status: IngestionStatusType;
+  error?: string;
+  metadata?: {
+    pageCount?: number;
+    wordCount?: number;
+    language?: string;
+    retryCount?: number;
+    startTime?: string;
+    lastChecked?: string;
+    lastRetry?: string;
+  };
   startedAt: string;
-  createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
+}
+
+export interface TriggerIngestionDto {
+  documentId: number;
 }
 
 export const ingestionApi = {
-  startIngestion: async (documentId: number): Promise<IngestionStatus> => {
-    const response = await apiClient.post<IngestionStatus>(`/ingestion`, { documentId });
-    return response.data;
+  startIngestion: async (documentId: number): Promise<void> => {
+    const payload: TriggerIngestionDto = { documentId };
+    await apiClient.post('/ingestion', payload);
   },
 
   getIngestionStatus: async (documentId: number): Promise<IngestionStatus> => {
-    const response = await apiClient.get<IngestionStatus>(`/ingestion/${documentId}`);
+    const response = await apiClient.get(`/ingestion/${documentId}`);
     return response.data;
   },
 
-  retryIngestion: async (documentId: number): Promise<IngestionStatus> => {
-    const response = await apiClient.post<IngestionStatus>(`/ingestion/${documentId}/retry`);
-    return response.data;
-  },
+  retryIngestion: async (documentId: number): Promise<void> => {
+    const payload: TriggerIngestionDto = { documentId };
+    await apiClient.post('/ingestion', payload);
+  }
 }; 

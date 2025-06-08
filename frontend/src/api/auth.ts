@@ -1,14 +1,24 @@
 import { apiClient } from './client';
 import type { AuthResponse, LoginCredentials, RegisterData, RefreshTokenResponse } from '../types/auth';
 
+export interface RegisterDto {
+  email: string;
+  password: string;
+  roles: string[];
+}
+
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+
 export const authApi = {
-  register: async (data: RegisterData): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>('/auth/register', data);
-    return response.data;
+  register: async (data: RegisterDto): Promise<void> => {
+    await apiClient.post('/auth/register', data);
   },
 
-  login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>('/auth/login', credentials);
+  login: async (data: LoginDto): Promise<AuthResponse> => {
+    const response = await apiClient.post<AuthResponse>('/auth/login', data);
     return response.data;
   },
 

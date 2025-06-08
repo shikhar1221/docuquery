@@ -16,4 +16,6 @@ export interface IngestionStatusResponse {
 
 export interface TriggerIngestionDto {
   documentId: string;
-} 
+}
+
+export type IngestionStatusEnum = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED'; 

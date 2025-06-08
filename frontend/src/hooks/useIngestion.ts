@@ -1,14 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ingestionApi, IngestionStatus, IngestionStatusEnum } from '../api/ingestion';
+import { ingestionApi } from '../api/ingestion';
+import type { IngestionStatus } from '../api/ingestion';
 
 export const useIngestion = (documentId: number) => {
   const queryClient = useQueryClient();
 
-  const { data: status, isLoading, error } = useQuery<IngestionStatus, Error>({
+  const { data: ingestionStatus, isLoading, error } = useQuery<IngestionStatus, Error>({
     queryKey: ['ingestion', documentId],
     queryFn: () => ingestionApi.getIngestionStatus(documentId),
-    refetchInterval: (data) => 
-      data?.status === IngestionStatusEnum.PROCESSING ? 2000 : false,
+  });
+
+  // Separate query for auto-refresh when processing
+  useQuery<IngestionStatus, Error>({
+    queryKey: ['ingestion-refresh', documentId],
+    queryFn: () => ingestionApi.getIngestionStatus(documentId),
+    refetchInterval: 2000,
+    enabled: ingestionStatus?.status === 'PROCESSING',
   });
 
   const { mutate: startIngestion, isPending: isStarting } = useMutation({
@@ -25,13 +32,17 @@ export const useIngestion = (documentId: number) => {
     },
   });
 
+  const canRetry = ingestionStatus?.status === 'FAILED' && 
+    (ingestionStatus.metadata?.retryCount || 0) < 3;
+
   return {
-    status,
+    ingestionStatus,
     isLoading,
     error,
     startIngestion,
     retryIngestion,
     isStarting,
     isRetrying,
+    canRetry,
   };
 }; 

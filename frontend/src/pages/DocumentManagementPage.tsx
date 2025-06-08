@@ -81,7 +81,7 @@ const DocumentManagementPage: React.FC = () => {
       await ingestionApi.startIngestion(id);
       message.success('Document ingestion started');
     } catch (err) {
-      message.error('Failed to start document ingestion');
+      message.error('Failed to start document ingestion: ' + err);
     }
   };
 

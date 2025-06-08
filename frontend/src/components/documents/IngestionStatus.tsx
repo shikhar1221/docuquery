@@ -1,164 +1,165 @@
 import React from 'react';
-import { Button, Tag, Progress, Space, Tooltip } from 'antd';
+import { Button, Tag, Progress } from 'antd';
 import { 
   ClockCircleOutlined, 
   SyncOutlined, 
   CheckCircleOutlined, 
   CloseCircleOutlined,
-  ReloadOutlined
+  FileTextOutlined,
+  GlobalOutlined,
+  NumberOutlined
 } from '@ant-design/icons';
 import { useIngestion } from '../../hooks/useIngestion';
-import { IngestionStatusEnum } from '../../api/ingestion';
+import type { IngestionStatus } from '../../api/ingestion';
 
 interface IngestionStatusProps {
   documentId: number;
 }
 
-const getStatusColor = (status: IngestionStatusEnum) => {
+const getStatusColor = (status: string): string => {
   switch (status) {
-    case IngestionStatusEnum.PENDING:
+    case 'PENDING':
       return 'default';
-    case IngestionStatusEnum.PROCESSING:
+    case 'PROCESSING':
       return 'processing';
-    case IngestionStatusEnum.COMPLETED:
+    case 'COMPLETED':
       return 'success';
-    case IngestionStatusEnum.FAILED:
+    case 'FAILED':
       return 'error';
     default:
       return 'default';
   }
 };
 
-const getStatusIcon = (status: IngestionStatusEnum) => {
+const getStatusIcon = (status: string): React.ReactNode => {
   switch (status) {
-    case IngestionStatusEnum.PENDING:
+    case 'PENDING':
       return <ClockCircleOutlined />;
-    case IngestionStatusEnum.PROCESSING:
+    case 'PROCESSING':
       return <SyncOutlined spin />;
-    case IngestionStatusEnum.COMPLETED:
+    case 'COMPLETED':
       return <CheckCircleOutlined />;
-    case IngestionStatusEnum.FAILED:
+    case 'FAILED':
       return <CloseCircleOutlined />;
     default:
       return <ClockCircleOutlined />;
   }
 };
 
-const getStatusText = (status: IngestionStatusEnum) => {
-  switch (status) {
-    case IngestionStatusEnum.PENDING:
-      return 'Pending';
-    case IngestionStatusEnum.PROCESSING:
-      return 'Processing';
-    case IngestionStatusEnum.COMPLETED:
-      return 'Completed';
-    case IngestionStatusEnum.FAILED:
-      return 'Failed';
-    default:
-      return 'Unknown';
-  }
-};
-
-export const IngestionStatus: React.FC<IngestionStatusProps> = ({ documentId }) => {
+const IngestionStatusComponent: React.FC<IngestionStatusProps> = ({ documentId }) => {
   const { 
-    status, 
+    ingestionStatus, 
     isLoading, 
     error, 
     startIngestion, 
     retryIngestion,
     isStarting,
-    isRetrying
+    isRetrying,
+    canRetry
   } = useIngestion(documentId);
 
   if (isLoading) {
-    return <Tag icon={<SyncOutlined spin />} color="processing">Loading...</Tag>;
+    return <Tag>Loading...</Tag>;
   }
 
   if (error) {
-    return (
-      <Space direction="vertical" size="small">
-        <Tag color="error" icon={<CloseCircleOutlined />}>
-          Error: {error.message}
-        </Tag>
-        <Button 
-          size="small" 
-          icon={<ReloadOutlined />} 
-          onClick={() => retryIngestion()}
-          loading={isRetrying}
-        >
-          Retry
-        </Button>
-      </Space>
-    );
+    return <Tag color="error">Error: {error.message}</Tag>;
   }
 
-  if (!status) {
-    return (
-      <Button 
-        type="primary" 
-        size="small" 
-        onClick={() => startIngestion()}
-        loading={isStarting}
-      >
-        Start Ingestion
-      </Button>
-    );
+  if (!ingestionStatus) {
+    return <Tag>No status available</Tag>;
   }
 
-  const isProcessing = status.status === IngestionStatusEnum.PROCESSING;
-  const isFailed = status.status === IngestionStatusEnum.FAILED;
-  const isCompleted = status.status === IngestionStatusEnum.COMPLETED;
+  const { status, metadata } = ingestionStatus;
 
   return (
-    <Space direction="vertical" size="small" style={{ width: '100%' }}>
-      <Tag 
-        color={getStatusColor(status.status)} 
-        icon={getStatusIcon(status.status)}
-      >
-        {getStatusText(status.status)}
-      </Tag>
-
-      {isProcessing && (
-        <Progress 
-          percent={99} 
-          status="active" 
-          size="small" 
-          showInfo={false}
-        />
-      )}
-
-      {isFailed && (
-        <Space direction="vertical" size="small">
-          <Tooltip title={status.error || 'Unknown error'}>
-            <Tag color="error">Error: {status.error || 'Failed'}</Tag>
-          </Tooltip>
+    <div className="ingestion-status">
+      <div className="status-header">
+        <Tag color={getStatusColor(status)} icon={getStatusIcon(status)}>
+          {status}
+        </Tag>
+        {status === 'PENDING' && (
           <Button 
+            type="primary" 
             size="small" 
-            icon={<ReloadOutlined />} 
-            onClick={() => retryIngestion()}
+            onClick={() => startIngestion()} 
+            loading={isStarting}
+          >
+            Start Ingestion
+          </Button>
+        )}
+        {status === 'FAILED' && canRetry && (
+          <Button 
+            type="primary" 
+            size="small" 
+            onClick={() => retryIngestion()} 
             loading={isRetrying}
           >
             Retry
           </Button>
-        </Space>
+        )}
+      </div>
+
+      {status === 'PROCESSING' && (
+        <Progress percent={99} status="active" />
       )}
 
-      {isCompleted && status.metadata && (
-        <Space direction="vertical" size="small">
-          {status.metadata.pageCount && (
-            <Tag>Pages: {status.metadata.pageCount}</Tag>
+      {status === 'COMPLETED' && metadata && (
+        <div className="metadata">
+          {metadata.pageCount && (
+            <div className="metadata-item">
+              <FileTextOutlined /> Pages: {metadata.pageCount}
+            </div>
           )}
-          {status.metadata.wordCount && (
-            <Tag>Words: {status.metadata.wordCount}</Tag>
+          {metadata.wordCount && (
+            <div className="metadata-item">
+              <NumberOutlined /> Words: {metadata.wordCount}
+            </div>
           )}
-          {status.metadata.language && (
-            <Tag>Language: {status.metadata.language}</Tag>
+          {metadata.language && (
+            <div className="metadata-item">
+              <GlobalOutlined /> Language: {metadata.language}
+            </div>
           )}
-          {status.metadata.processedAt && (
-            <Tag>Processed: {new Date(status.metadata.processedAt).toLocaleString()}</Tag>
-          )}
-        </Space>
+        </div>
       )}
-    </Space>
+
+      {status === 'FAILED' && ingestionStatus.error && (
+        <div className="error-message">
+          Error: {ingestionStatus.error}
+        </div>
+      )}
+
+      <style>{`
+        .ingestion-status {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+        }
+        .status-header {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .metadata {
+          display: flex;
+          flex-direction: column;
+          gap: 4px;
+          margin-top: 8px;
+        }
+        .metadata-item {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          color: rgba(0, 0, 0, 0.65);
+        }
+        .error-message {
+          color: #ff4d4f;
+          margin-top: 8px;
+        }
+      `}</style>
+    </div>
   );
-}; 
+};
+
+export { IngestionStatusComponent as IngestionStatus }; 
