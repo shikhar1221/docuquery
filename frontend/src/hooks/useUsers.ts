@@ -1,7 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { usersApi } from '../api/users';
-import type { User, CreateUserDto } from '../types/user';
+import type { User, CreateUserDto, UpdateUserDto } from '../types/user';
 
 export const useUsers = () => {
   const queryClient = useQueryClient();
@@ -60,11 +60,23 @@ export const useUsers = () => {
     [deleteMutation]
   );
 
+  const updateUser = useCallback(async (id: number, userData: UpdateUserDto) => {
+    try {
+      setError(null);
+      const updatedUser = await usersApi.update(id, userData);
+      return updatedUser;
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to update user');
+      throw err;
+    }
+  }, []);
+
   return {
     users,
     isLoading,
     error,
     createUser,
     deleteUser,
+    updateUser,
   };
 }; 

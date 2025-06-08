@@ -1,12 +1,5 @@
 import type { User } from './user';
-
-export const Role = {
-  Admin: 'admin',
-  Editor: 'editor',
-  Viewer: 'viewer',
-} as const;
-
-export type Role = typeof Role[keyof typeof Role];
+import type { Role } from './roles';
 
 export interface LoginCredentials {
   email: string;

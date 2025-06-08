@@ -1,5 +1,4 @@
 import { apiClient } from './client';
-import type { AuthResponse, LoginCredentials, RegisterData, RefreshTokenResponse } from '../types/auth';
 
 export interface RegisterDto {
   email: string;
@@ -10,6 +9,23 @@ export interface RegisterDto {
 export interface LoginDto {
   email: string;
   password: string;
+}
+
+export interface AuthResponse {
+  accessToken: string;
+  refreshToken: string;
+  user: {
+    id: number;
+    email: string;
+    roles: string[];
+    permissions: Record<string, boolean>;
+    createdAt: string;
+    updatedAt: string;
+  };
+}
+
+export interface RefreshTokenResponse {
+  accessToken: string;
 }
 
 export const authApi = {
@@ -26,18 +42,8 @@ export const authApi = {
     await apiClient.delete('/auth/logout');
   },
 
-  getCurrentUser: async (): Promise<AuthResponse> => {
-    const response = await apiClient.get<AuthResponse>('/auth/me');
-    return response.data;
-  },
-
   refreshToken: async (refreshToken: string): Promise<RefreshTokenResponse> => {
     const response = await apiClient.post<RefreshTokenResponse>('/auth/refresh', { refreshToken });
     return response.data;
-  },
-
-  checkAuth: async (): Promise<AuthResponse> => {
-    const response = await apiClient.get<AuthResponse>('/auth/check');
-    return response.data;
-  },
+  }
 }; 
