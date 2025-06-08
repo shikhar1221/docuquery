@@ -61,7 +61,18 @@ export class AuthService {
     return updatedUser;
   }
 
-  async login(loginDto: LoginDto): Promise<{ accessToken: string; refreshToken: string }> {
+  async login(loginDto: LoginDto): Promise<{ 
+    accessToken: string; 
+    refreshToken: string;
+    user: {
+      id: number;
+      email: string;
+      roles: Role[];
+      permissions: Record<string, boolean>;
+      createdAt: Date;
+      updatedAt: Date;
+    };
+  }> {
     this.logger.log(`Login attempt for user: ${loginDto.email}`);
     
     const user = await this.userRepository.findByEmail(loginDto.email)
@@ -86,7 +97,18 @@ export class AuthService {
     const refreshToken = await this.tokenRepository.createRefreshToken(user)
     
     this.logger.log(`User logged in successfully: ${user.id}`);
-    return { accessToken, refreshToken: refreshToken.token }
+    return { 
+      accessToken, 
+      refreshToken: refreshToken.token,
+      user: {
+        id: user.id,
+        email: user.email,
+        roles: user.roles,
+        permissions: user.permissions,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt
+      }
+    }
   }
 
   async refreshToken(refreshToken: string): Promise<{ accessToken: string }> {

@@ -73,15 +73,15 @@ export class DocumentController {
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async create(
     @UploadedFile() file: Multer.File,
-    @Body() body: { title: string; description: string },
+    @Body() body: { title: string; description: string, userId: string },
     @Req() req: ExpressRequest & { user?: any },
   ) {
     try {
       let createDocumentDto = new CreateDocumentDto()
-      const { title, description } = body
+      const { title, description, userId } = body
       createDocumentDto.title = title
       createDocumentDto.description = description
-      createDocumentDto.userId = req.user.sub
+      createDocumentDto.userId = userId || req.user.sub 
       console.log(createDocumentDto)
       return await this.documentService.create(createDocumentDto, file)
     } catch (error) {

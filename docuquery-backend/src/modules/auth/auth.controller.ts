@@ -44,7 +44,58 @@ export class AuthController {
   }
 
   @ApiOperation({ summary: 'Login a user' })
-  @ApiResponse({ status: 200, description: 'User logged in successfully.' })
+  @ApiResponse({ 
+    status: 200, 
+    description: 'User logged in successfully.',
+    schema: {
+      type: 'object',
+      properties: {
+        accessToken: {
+          type: 'string',
+          description: 'JWT access token'
+        },
+        refreshToken: {
+          type: 'string',
+          description: 'JWT refresh token'
+        },
+        user: {
+          type: 'object',
+          properties: {
+            id: {
+              type: 'number',
+              description: 'User ID'
+            },
+            email: {
+              type: 'string',
+              description: 'User email'
+            },
+            roles: {
+              type: 'array',
+              items: {
+                type: 'string',
+                enum: ['admin', 'viewer', 'editor']
+              },
+              description: 'User roles'
+            },
+            permissions: {
+              type: 'object',
+              description: 'User permissions'
+            },
+            createdAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'User creation timestamp'
+            },
+            updatedAt: {
+              type: 'string',
+              format: 'date-time',
+              description: 'User last update timestamp'
+            }
+          }
+        }
+      }
+    }
+  })
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
     this.logger.log(`Login request received for email: ${loginDto.email}`);
