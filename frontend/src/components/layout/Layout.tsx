@@ -1,5 +1,7 @@
 import React from 'react';
 import { Layout as AntLayout, Menu, Button, Space, Avatar, Dropdown } from 'antd';
+import { Grid } from 'antd';
+const { useBreakpoint } = Grid;
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   FileOutlined,
@@ -20,7 +22,7 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useSessionStore();
-  const [collapsed, setCollapsed] = React.useState(false);
+  const screens = useBreakpoint();
 
   const handleLogout = () => {
     logout();
@@ -57,28 +59,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
 
   return (
     <AntLayout style={{ minHeight: '100vh' }}>
-      <Sider 
-        trigger={null} 
-        collapsible 
-        collapsed={collapsed}
-        style={{
-          overflow: 'auto',
-          height: '100vh',
-          position: 'fixed',
-          left: 0,
-          top: 0,
-          bottom: 0,
-        }}
-      >
-        <div style={{ height: 32, margin: 16, background: 'rgba(255, 255, 255, 0.2)' }} />
-        <Menu
-          theme="dark"
-          mode="inline"
-          selectedKeys={[location.pathname]}
-          items={menuItems}
-        />
-      </Sider>
-      <AntLayout style={{ marginLeft: collapsed ? 80 : 200, transition: 'all 0.2s' }}>
+
+      <AntLayout style={{ marginLeft: 0, transition: 'all 0.2s' }}>
         <Header style={{ 
           padding: '0 16px', 
           background: '#fff', 
@@ -87,12 +69,14 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
           justifyContent: 'space-between',
           boxShadow: '0 1px 4px rgba(0,21,41,.08)'
         }}>
-          <Button
-            type="text"
-            icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
-            onClick={() => setCollapsed(!collapsed)}
-            style={{ fontSize: '16px', width: 64, height: 64 }}
+          <Menu
+            theme="light"
+            mode="horizontal"
+            selectedKeys={[location.pathname]}
+            items={menuItems}
+            style={{ flex: 1, minWidth: 0 }}
           />
+
           <Space>
             {user ? (
               <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
@@ -119,4 +103,4 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       </AntLayout>
     </AntLayout>
   );
-}; 
+};
