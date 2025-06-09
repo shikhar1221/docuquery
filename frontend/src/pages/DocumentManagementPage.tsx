@@ -182,27 +182,46 @@ const DocumentManagementPage: React.FC = () => {
   ];
 
   return (
-    <div className="p-4">
-      <div className="max-w-screen-lg mx-auto mb-4">
-        <h1 className="text-2xl font-bold">Document Management</h1>
-        <Button icon={<UploadOutlined />} type="primary" onClick={() => setIsUploadModalVisible(true)}>
-          Upload Document
-        </Button>
-      </div>
-
-      {error && (
-        <div>
-          {error}
+    <div className="p-8 bg-gray-50 min-h-screen">
+      <div className="max-w-screen-lg mx-auto bg-white p-6 rounded-lg shadow-md">
+        <div className="flex justify-between items-center mb-6 pb-4 border-b border-gray-200">
+          <h1 className="text-3xl font-bold text-gray-800">Document Management</h1>
+          <Button
+            icon={<UploadOutlined />}
+            type="primary"
+            onClick={() => setIsUploadModalVisible(true)}
+            size="large"
+          >
+            Upload Document
+          </Button>
         </div>
-      )}
 
-      <div className="max-w-screen-lg mx-auto overflow-x-auto">
-        <Table
-          columns={columns}
-          dataSource={documents}
-          rowKey="id"
-          loading={loading}
-        />
+        {error && (
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <strong className="font-bold">Error:</strong>
+            <span className="block sm:inline"> {error}</span>
+          </div>
+        )}
+
+        <div className="overflow-x-auto">
+          <Table
+            columns={columns}
+            dataSource={documents}
+            loading={loading}
+            rowKey="id"
+            className="border border-gray-200 rounded-lg shadow-sm"
+            pagination={{ pageSize: 10 }}
+            scroll={{ x: 'max-content' }}
+            rowClassName={() => 'hover:bg-gray-50'}
+            components={{
+              body: {
+                row: (props: any) => <tr {...props} className="text-gray-700" />,
+              },
+            }}
+            onRow={() => ({ className: 'py-3' })}
+          />
+        </div>
+
       </div>
 
       <Modal
