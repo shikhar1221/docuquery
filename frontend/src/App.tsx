@@ -25,7 +25,7 @@ const App: React.FC = () => {
       <ConfigProvider
         theme={{
           token: {
-            colorPrimary: '#1890ff',
+            colorPrimary: '#4F46E5',
           },
         }}
       >

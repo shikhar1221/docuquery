@@ -164,9 +164,9 @@ const DocumentManagementPage: React.FC = () => {
   ];
 
   return (
-    <div className="p-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">Document Management</h1>
+    <div>
+      <div>
+        <h1>Document Management</h1>
         <Upload
           customRequest={handleUpload}
           showUploadList={false}
@@ -179,7 +179,7 @@ const DocumentManagementPage: React.FC = () => {
       </div>
 
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+        <div>
           {error}
         </div>
       )}
@@ -274,4 +274,4 @@ const DocumentManagementPage: React.FC = () => {
   );
 };
 
-export default DocumentManagementPage; 
+export default DocumentManagementPage;

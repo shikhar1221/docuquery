@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { Role } from '../types/auth';
+import type { Role } from '../types/roles';
+import type { Permission } from '../types/roles';
 import type { User } from '../types/user';
 
 interface SessionState {
@@ -14,8 +15,9 @@ interface SessionState {
   updateAccessToken: (accessToken: string) => void;
   clearSession: () => void;
   hasRole: (role: Role) => boolean;
-  hasPermission: (permission: string) => boolean;
+  hasPermission: (permission: Permission) => boolean;
   logout: () => void;
+  setLoading: (isLoading: boolean) => void;
 }
 
 type SessionStore = SessionState;
@@ -57,7 +59,7 @@ export const useSessionStore = create<SessionStore>()(
         return state.user?.roles.includes(role) ?? false;
       },
 
-      hasPermission: (permission: string): boolean => {
+      hasPermission: (permission: Permission): boolean => {
         const state = get();
         return state.user?.permissions[permission] ?? false;
       },
@@ -69,9 +71,10 @@ export const useSessionStore = create<SessionStore>()(
           refreshToken: null,
           isAuthenticated: false,
         }),
+      setLoading: (isLoading: boolean) => set({ isLoading }),
     }),
     {
       name: 'session-storage',
     }
   )
-); 
+);

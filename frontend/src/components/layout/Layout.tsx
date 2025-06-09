@@ -63,29 +63,20 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   ];
 
   return (
-    <AntLayout style={{ minHeight: '100vh' }}>
-
-      <AntLayout style={{ marginLeft: 0, transition: 'all 0.2s' }}>
-        <Header style={{
-          padding: screens.lg ? '0 50px' : '0 16px',
-          background: '#fff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          boxShadow: '0 1px 4px rgba(0,21,41,.08)'
-        }}>
+      <AntLayout className="min-h-screen transition-all duration-200 ease-in-out">
+        <Header className="flex items-center justify-between bg-white shadow-md px-4 sm:px-6 lg:px-8">
           <Menu
             theme="light"
             mode="horizontal"
             selectedKeys={[location.pathname]}
             items={menuItems}
-            style={{ flex: 1, minWidth: 0 }}
+            className="flex-1 min-w-0"
           />
 
           <Space>
             {user ? (
               <Dropdown menu={{ items: userMenuItems }} placement="bottomRight">
-                <Space style={{ cursor: 'pointer' }}>
+                <Space className="cursor-pointer">
                   <Avatar icon={<UserOutlined />} />
                   <span>{user.email}</span>
                 </Space>
@@ -102,15 +93,11 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             )}
           </Space>
         </Header>
-        <Content style={{
-          margin: screens.lg ? '24px 50px' : '24px 16px',
-          padding: screens.lg ? 24 : 16,
-          background: '#fff',
-          minHeight: 280
-        }}> 
-          {children}
+        <Content className="bg-gray-100 min-h-[calc(100vh-64px)]">
+          <div className="bg-white rounded-lg shadow-md min-h-[calc(100vh-128px)]">
+            {children}
+          </div>
         </Content>
       </AntLayout>
-    </AntLayout>
   );
 };
