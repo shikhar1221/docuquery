@@ -1,3 +1,5 @@
-docuquery-backend/pnpm-lock.yaml
-docuquery-frontend/package-lock.json
+backend/pnpm-lock.yaml
+backend//uploads/*
+frontend/package-lock.json
 .qodo
+.DS_Store

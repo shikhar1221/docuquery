@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm'
 import { ConfigModule, ConfigService } from '@nestjs/config'
-import { AuthModule } from '../modules/auth/auth.module'
+import { AuthModule } from './auth/auth.module'
 import { UserManagementModule } from './userManagement/userManagement.module'
 import { DocumentModule } from './document/document.module';
 import { IngestionModule } from './ingestion/ingestion.module';
