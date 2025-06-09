@@ -196,7 +196,7 @@ const DocumentManagementPage: React.FC = () => {
         </div>
       )}
 
-      <div className="max-w-screen-lg mx-auto">
+      <div className="max-w-screen-lg mx-auto overflow-x-auto">
         <Table
           columns={columns}
           dataSource={documents}
