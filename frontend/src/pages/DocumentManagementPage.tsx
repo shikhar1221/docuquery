@@ -64,6 +64,7 @@ const DocumentManagementPage: React.FC = () => {
   };
 
   const handleDelete = async (id: number) => {
+    console.log('Attempting to delete document with ID:', id);
     try {
       await deleteDocument(id);
       message.success('Document deleted successfully');

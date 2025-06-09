@@ -5,10 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { useSessionStore } from '../store/session';
 import { authApi } from '../api/auth';
 
+import { Role } from '../types/roles';
+
 interface SignUpFormValues {
   email: string;
   password: string;
   confirmPassword: string;
+  roles?: Role[];
 }
 
 export const SignUpPage: React.FC = () => {
@@ -21,6 +24,7 @@ export const SignUpPage: React.FC = () => {
       const response = await authApi.register({
         email: values.email,
         password: values.password,
+        roles: [Role.Viewer],
       });
       setSession(response.user, response.accessToken, response.refreshToken);
       message.success('Registration successful');

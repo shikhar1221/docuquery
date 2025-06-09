@@ -1,9 +1,10 @@
 import { apiClient } from './client';
+import { Role } from '../types/roles';
 
 export interface RegisterDto {
   email: string;
   password: string;
-  roles: string[];
+  roles: Role[];
 }
 
 export interface LoginDto {
@@ -17,7 +18,7 @@ export interface AuthResponse {
   user: {
     id: number;
     email: string;
-    roles: string[];
+    roles: Role[];
     permissions: Record<string, boolean>;
     createdAt: string;
     updatedAt: string;
@@ -29,8 +30,9 @@ export interface RefreshTokenResponse {
 }
 
 export const authApi = {
-  register: async (data: RegisterDto): Promise<void> => {
-    await apiClient.post('/auth/register', data);
+  register: async (data: RegisterDto): Promise<any> => {
+    const response=await apiClient.post('/auth/register', data);
+    return response.data;
   },
 
   login: async (data: LoginDto): Promise<AuthResponse> => {
@@ -46,4 +48,4 @@ export const authApi = {
     const response = await apiClient.post<RefreshTokenResponse>('/auth/refresh', { refreshToken });
     return response.data;
   }
-}; 
+};

@@ -132,16 +132,18 @@ export class DocumentService {
 
   async remove(id: string): Promise<void> {
     try {
+      this.logger.log(`Attempting to remove document with ID: ${id}`);
       const document = await this.findOneDocumentByIdWithUser(id)
+      this.logger.log(`Document found: ${JSON.stringify(document)}`);
       if (!document) {
         throw new Error(`Document with ID ${id} not found`)
       }
 
       // Find the user associated with the document
-      const userId = document.user
-
-      const user = await this.userRepository.findOneById(userId.id.toString())
-      if (user) {
+      if (document.user) {
+        this.logger.log(`Document user found: ${JSON.stringify(document.user)}`);
+        const user = await this.userRepository.findOneById(document.user.id.toString())
+        if (user) {
         // Remove the document from the user's document list
         if (user.documents && Array.isArray(user.documents)) {
           user.documents = user.documents.filter((doc) => doc.id !== document.id)
@@ -150,10 +152,21 @@ export class DocumentService {
           this.logger.warn('User documents is not defined, cannot filter document removal')
         }
 
+        }
+
+      }
+
+        // Delete associated ingestion status entries
+        await this.documentRepository.repository
+          .createQueryBuilder()
+          .delete()
+          .from('ingestion_status')
+          .where('documentId = :documentId', { documentId: document.id })
+          .execute()
+
         // Remove the document itself
         await this.documentRepository.removeDocument(id)
         this.logger.log(`Deleted document with ID: ${id}`)
-      }
     } catch (error) {
       this.logger.error('Error deleting document:', error)
       throw error
