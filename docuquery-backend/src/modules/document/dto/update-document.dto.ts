@@ -13,6 +13,4 @@ export class UpdateDocumentDto {
   description?: string
 
   userId?: string
-
-  documentId?: string
 }

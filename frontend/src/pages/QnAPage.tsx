@@ -22,7 +22,8 @@ export const QnAPage = () => {
   };
 
   return (
-        <div className="bg-white rounded-xl shadow p-6">
+    <div className="p-4">
+      <div className="max-w-screen-lg mx-auto bg-white rounded-xl shadow p-6">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Q&A Interface</h2>
 
           <form onSubmit={handleSubmit} className="space-y-4 mb-8">
@@ -67,6 +68,7 @@ export const QnAPage = () => {
               )}
             </div>
           )}
-        </div>
+      </div>
+    </div>
   );
 };

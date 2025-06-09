@@ -28,7 +28,7 @@ export const LoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <Card className="w-full p-8 rounded-lg shadow-lg">
+      <Card className="w-full max-w-md p-8 rounded-lg shadow-lg mx-auto">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
             Sign in to your account

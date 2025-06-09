@@ -156,7 +156,6 @@ export class DocumentController {
       properties: {
         title: { type: 'string' },
         description: { type: 'string' },
-        documentId: { type: 'string' },
         file: {
           type: 'string',
           format: 'binary',
@@ -168,18 +167,18 @@ export class DocumentController {
   @ApiResponse({ status: 200, description: 'The document has been successfully updated.', type: DocumentEntity })
   @ApiResponse({ status: 403, description: 'Forbidden.' })
   async update(
+    @Param('id') id: string,
     @UploadedFile() file: Multer.File,
-    @Body() body: { title: string; description: string; documentId: string },
+    @Body() body: { title: string; description: string },
     @Req() req: ExpressRequest & { user?: any },
   ) {
     try {
       const updateDocumentDto = new UpdateDocumentDto()
-      const { title, description, documentId } = body
+      const { title, description } = body
       updateDocumentDto.title = title
       updateDocumentDto.description = description
-      updateDocumentDto.documentId = documentId
       updateDocumentDto.userId = req.user.sub
-      return await this.documentService.update(documentId, updateDocumentDto, file)
+      return await this.documentService.update(id, updateDocumentDto, file)
     } catch (error) {
       throw new HttpException('Failed to update document', 500)
     }

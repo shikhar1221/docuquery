@@ -67,7 +67,7 @@ const IngestionStatusComponent: React.FC<IngestionStatusProps> = ({ documentId }
   }
 
   if (!ingestionStatus) {
-    return <Tag>No status available</Tag>;
+    return <Tag color="default">Pending</Tag>;
   }
 
   const { status, metadata } = ingestionStatus;
@@ -162,4 +162,4 @@ const IngestionStatusComponent: React.FC<IngestionStatusProps> = ({ documentId }
   );
 };
 
-export { IngestionStatusComponent as IngestionStatus }; 
+export { IngestionStatusComponent as IngestionStatus };

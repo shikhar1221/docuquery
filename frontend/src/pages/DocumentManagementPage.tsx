@@ -164,18 +164,12 @@ const DocumentManagementPage: React.FC = () => {
   ];
 
   return (
-    <div>
-      <div>
-        <h1>Document Management</h1>
-        <Upload
-          customRequest={handleUpload}
-          showUploadList={false}
-          accept=".pdf,.doc,.docx,.txt"
-        >
-          <Button icon={<UploadOutlined />} type="primary">
-            Upload Document
-          </Button>
-        </Upload>
+    <div className="p-4">
+      <div className="max-w-screen-lg mx-auto mb-4">
+        <h1 className="text-2xl font-bold">Document Management</h1>
+        <Button icon={<UploadOutlined />} type="primary" onClick={() => setIsUploadModalVisible(true)}>
+          Upload Document
+        </Button>
       </div>
 
       {error && (
@@ -184,12 +178,14 @@ const DocumentManagementPage: React.FC = () => {
         </div>
       )}
 
-      <Table
-        columns={columns}
-        dataSource={documents}
-        rowKey="id"
-        loading={loading}
-      />
+      <div className="max-w-screen-lg mx-auto">
+        <Table
+          columns={columns}
+          dataSource={documents}
+          rowKey="id"
+          loading={loading}
+        />
+      </div>
 
       <Modal
         title="Upload Document"

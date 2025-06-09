@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { useSessionStore } from '../../store/session';
-import type { Role } from '../../types/auth';
+import type { Role } from '../../types/roles';
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -28,7 +28,7 @@ export const ProtectedRoute = ({ children, requiredRoles }: ProtectedRouteProps)
 
   if (isLoading || isChecking) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div>
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600"></div>
       </div>
     );
@@ -46,4 +46,4 @@ export const ProtectedRoute = ({ children, requiredRoles }: ProtectedRouteProps)
   }
 
   return <>{children}</>;
-}; 
+};

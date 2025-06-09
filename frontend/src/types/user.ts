@@ -2,7 +2,6 @@ import type { Role, Permission } from './roles';
 
 export type User = {
   id: number;
-  username: string;
   email: string;
   roles: Role[];
   permissions: Record<Permission, boolean>;
@@ -11,11 +10,10 @@ export type User = {
 };
 
 export type CreateUserDto = {
-  username: string;
   email: string;
   password: string;
   roles?: Role[];
-  permissions?: Partial<Record<Permission, boolean>>;
+  permissions?: Partial<Record<Permission, boolean>>; 
 };
 
 export type UpdateUserDto = {
@@ -32,4 +30,4 @@ export type UserQueryParams = {
   sortBy?: keyof User;
   sortOrder?: 'asc' | 'desc';
   search?: string;
-}; 
+};

@@ -93,8 +93,8 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             )}
           </Space>
         </Header>
-        <Content className="bg-gray-100 min-h-[calc(100vh-64px)]">
-          <div className="bg-white rounded-lg shadow-md min-h-[calc(100vh-128px)]">
+        <Content className="bg-gray-100">
+          <div className="bg-white rounded-lg shadow-md">
             {children}
           </div>
         </Content>

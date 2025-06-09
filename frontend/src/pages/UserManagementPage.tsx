@@ -7,7 +7,6 @@ import type { Role as RoleType } from '../types/roles';
 export const UserManagementPage = () => {
   const { users, isLoading, error, createUser, updateUser, deleteUser } = useUsers();
   const [newUser, setNewUser] = useState<CreateUserDto>({
-    username: '',
     email: '',
     password: '',
     roles: [Role.Viewer],
@@ -35,7 +34,6 @@ export const UserManagementPage = () => {
       setCreateError(null);
       await createUser(newUser);
       setNewUser({
-        username: '',
         email: '',
         password: '',
         roles: [Role.Viewer],
@@ -84,7 +82,8 @@ export const UserManagementPage = () => {
   }
 
   return (
-        <div className="bg-white rounded-xl shadow">
+    <div className="p-4">
+      <div className="max-w-screen-lg mx-auto bg-white rounded-xl shadow">
           <div className="p-6">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-2xl font-bold text-gray-900">User Management</h2>
@@ -99,31 +98,17 @@ export const UserManagementPage = () => {
             <div className="bg-gray-50 rounded-lg p-6 mb-8 border border-gray-200">
               <h3 className="text-lg font-semibold text-gray-900 mb-6">Create New User</h3>
               <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
-                    <input
-                      type="text"
-                      name="username"
-                      value={newUser.username}
-                      onChange={handleInputChange}
-                      className="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                      required
-                      placeholder="Enter username"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={newUser.email}
-                      onChange={handleInputChange}
-                      className="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
-                      required
-                      placeholder="Enter email"
-                    />
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <input
+                    type="email"
+                    name="email"
+                    value={newUser.email}
+                    onChange={handleInputChange}
+                    className="w-full rounded-lg border-gray-300 focus:border-indigo-500 focus:ring-indigo-500"
+                    required
+                    placeholder="Enter email"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">Password</label>
@@ -197,8 +182,18 @@ export const UserManagementPage = () => {
                       {users.map((user: User) => (
                         <tr key={user.id} className="hover:bg-gray-50">
                           <td className="px-6 py-4">
-                            <div className="text-sm font-medium text-gray-900">{user.username}</div>
-                            <div className="text-sm text-gray-500">{user.email}</div>
+                            <div className="flex items-center">
+                              <div className="h-10 w-10 flex-shrink-0">
+                                <img
+                                  className="h-10 w-10 rounded-full"
+                                  src={`https://ui-avatars.com/api/?name=${user.email}&background=random&color=fff`}
+                                  alt=""
+                                />
+                              </div>
+                              <div className="ml-4">
+                                <div className="font-medium text-gray-900">{user.email}</div>
+                              </div>
+                            </div>
                           </td>
                           <td className="px-6 py-4">
                             {editingUser?.id === user.id ? (
@@ -288,8 +283,8 @@ export const UserManagementPage = () => {
                 </div>
               )}
             </div>
-          </div>
         </div>
-
+        </div>
+        </div>
   );
 };

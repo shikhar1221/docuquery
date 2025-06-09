@@ -69,8 +69,8 @@ export const documentsApi = {
     return response.data;
   },
 
-  update: async (formData: FormData): Promise<Document> => {
-    const response = await apiClient.put<Document>(`/documents/${formData.get('documentId')}`, formData, {
+  update: async (id: number, formData: FormData): Promise<Document> => {
+    const response = await apiClient.put<Document>(`/documents/${id}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -92,4 +92,4 @@ export const documentsApi = {
   triggerIngestion: async (id: number): Promise<void> => {
     await apiClient.post(`/documents/${id}/ingest`);
   },
-}; 
+};

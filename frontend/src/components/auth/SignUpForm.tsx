@@ -33,7 +33,7 @@ const SignUpForm: React.FC = () => {
       name="signup"
       onFinish={onFinish}
       layout="vertical"
-      className="p-6 bg-white rounded-lg shadow-md"
+      className=""
     >
       <h2 className="text-2xl font-bold mb-6 text-center">Create Account</h2>
       
