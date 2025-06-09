@@ -7,6 +7,7 @@ import type { UploadFile } from 'antd/es/upload/interface';
 import { useSessionStore } from '../store/session';
 import { IngestionStatus } from '../components/documents/IngestionStatus';
 import { ingestionApi } from '../api/ingestion';
+import { documentsApi } from '../api/documents';
 
 interface FormValues {
   title: string;
@@ -73,9 +74,24 @@ const DocumentManagementPage: React.FC = () => {
     }
   };
 
-  const handleDownload = (id: number) => {
-    // Implementation of handleDownload function
+  const handleDownload = async (id: number, fileName: string) => {
+    try {
+      const blob = await documentsApi.download(id);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = fileName;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+      message.success('Document downloaded successfully');
+    } catch (error) {
+      message.error(error instanceof Error ? error.message : 'Failed to download document');
+    }
   };
+
+
 
   const handleIngest = async (id: number) => {
     try {
@@ -139,6 +155,7 @@ const DocumentManagementPage: React.FC = () => {
           >
             Edit
           </Button>
+
           <Button
             icon={<DeleteOutlined />}
             danger
@@ -148,7 +165,7 @@ const DocumentManagementPage: React.FC = () => {
           </Button>
           <Button
             icon={<DownloadOutlined />}
-            onClick={() => handleDownload(record.id)}
+            onClick={() => handleDownload(record.id, record.fileName)}
           >
             Download
           </Button>

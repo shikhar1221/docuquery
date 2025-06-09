@@ -31,11 +31,12 @@ export class DocumentService {
     try {
       let doc: DocumentEntity = new DocumentEntity()
       const fileName = `${uuidv4()}${extname(file.originalname)}`
-      const uploadPath = this.configService.get<string>('UPLOAD_DIRECTORY') || './uploads'
-      await this.saveFile(file, `${uploadPath}/${fileName}`)
+      const uploadPath = path.resolve(this.configService.get<string>('UPLOAD_DIRECTORY') || './uploads')
+      const absoluteFilePath = path.join(uploadPath, fileName)
+      await this.saveFile(file, absoluteFilePath)
       doc.title = createDocumentDto.title!
       doc.description = createDocumentDto.description!
-      doc.filePath = `${uploadPath}/${fileName}`
+      doc.filePath = absoluteFilePath
       doc.fileName = fileName
       doc.mimeType = file.mimetype
       doc.size = file.size
@@ -103,10 +104,11 @@ export class DocumentService {
 
       if (file) {
         const fileName = `${uuidv4()}${extname(file.originalname)}`
-        const uploadPath = this.configService.get<string>('UPLOAD_DIRECTORY') || './uploads'
-        await this.saveFile(file, `${uploadPath}/${fileName}`)
+        const uploadPath = path.resolve(this.configService.get<string>('UPLOAD_DIRECTORY') || './uploads')
+        const absoluteFilePath = path.join(uploadPath, fileName)
+        await this.saveFile(file, absoluteFilePath)
         document.fileName = fileName
-        document.filePath = `${uploadPath}/${fileName}`
+        document.filePath = absoluteFilePath
         document.mimeType = file.mimetype
         document.size = file.size
         document.uploadDate = new Date()
@@ -180,9 +182,9 @@ export class DocumentService {
         throw new Error(`File for document with ID ${id} not found`)
       }
       return {
-        name: document.metadata.file.name,
+        name: document.fileName,
         path: document.filePath,
-        type: document.metadata.file.type,
+        type: document.mimeType,
       }
     } catch (error) {
       this.logger.error('Error downloading file:', error)

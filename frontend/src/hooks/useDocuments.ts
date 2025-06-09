@@ -66,6 +66,7 @@ export const useDocuments = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['documents'] });
+      console.log('Document deleted successfully, invalidating queries.');
       setError(null);
     },
     onError: (err) => {
@@ -115,4 +116,4 @@ export const useDocuments = () => {
     deleteDocument,
     downloadDocument,
   };
-}; 
+};
