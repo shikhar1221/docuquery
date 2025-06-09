@@ -8,6 +8,7 @@ import { ProtectedRoute } from './components/auth/ProtectedRoute';
 import { LoginPage } from './pages/LoginPage';
 import { SignUpPage } from './pages/SignUpPage';
 import { UserManagementPage } from './pages/UserManagementPage';
+import { QnAPage } from './pages/QnAPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -58,6 +59,16 @@ const App: React.FC = () => {
                 <ProtectedRoute>
                   <Layout>
                     <UserManagementPage />
+                  </Layout>
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/qna"
+              element={
+                <ProtectedRoute>
+                  <Layout>
+                    <QnAPage />
                   </Layout>
                 </ProtectedRoute>
               }

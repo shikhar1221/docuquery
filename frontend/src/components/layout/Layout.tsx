@@ -55,17 +55,22 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
       icon: <UserOutlined />,
       label: <Link to="/users">Users</Link>,
     },
+    {
+      key: '/qna',
+      icon: <FileOutlined />,
+      label: <Link to="/qna">Q&A</Link>,
+    },
   ];
 
   return (
     <AntLayout style={{ minHeight: '100vh' }}>
 
       <AntLayout style={{ marginLeft: 0, transition: 'all 0.2s' }}>
-        <Header style={{ 
-          padding: '0 16px', 
-          background: '#fff', 
-          display: 'flex', 
-          alignItems: 'center', 
+        <Header style={{
+          padding: screens.lg ? '0 50px' : '0 16px',
+          background: '#fff',
+          display: 'flex',
+          alignItems: 'center',
           justifyContent: 'space-between',
           boxShadow: '0 1px 4px rgba(0,21,41,.08)'
         }}>
@@ -97,7 +102,12 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
             )}
           </Space>
         </Header>
-        <Content style={{ margin: '24px 16px', padding: 24, background: '#fff', minHeight: 280 }}>
+        <Content style={{
+          margin: screens.lg ? '24px 50px' : '24px 16px',
+          padding: screens.lg ? 24 : 16,
+          background: '#fff',
+          minHeight: 280
+        }}> 
           {children}
         </Content>
       </AntLayout>
