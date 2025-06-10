@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDocuments } from '../hooks/useDocuments';
 import type { Document, CreateDocumentDto } from '../types/document';
-import { Button, Table, Modal, Form, Input, Upload, message, Space, Tag } from 'antd';
+import { Button, Table, Modal, Form, Input, Upload, message, Space } from 'antd';
 import { UploadOutlined, DeleteOutlined, EditOutlined, DownloadOutlined, FileTextOutlined } from '@ant-design/icons';
 import type { UploadFile } from 'antd/es/upload/interface';
 import { useSessionStore } from '../store/session';

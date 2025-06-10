@@ -10,7 +10,6 @@ import {
   NumberOutlined
 } from '@ant-design/icons';
 import { useIngestion } from '../../hooks/useIngestion';
-import type { IngestionStatus } from '../../api/ingestion';
 
 interface IngestionStatusProps {
   documentId: number;

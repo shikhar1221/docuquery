@@ -1,9 +1,4 @@
-export enum IngestionStatus {
-  Pending = 'pending',
-  Processing = 'processing',
-  Completed = 'completed',
-  Failed = 'failed',
-}
+export type IngestionStatus = 'pending' | 'processing' | 'completed' | 'failed';
 
 export interface IngestionStatusResponse {
   id: string;
@@ -18,4 +13,4 @@ export interface TriggerIngestionDto {
   documentId: string;
 }
 
-export type IngestionStatusEnum = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED'; 
+export type IngestionStatusEnum = 'PENDING' | 'PROCESSING' | 'COMPLETED' | 'FAILED';

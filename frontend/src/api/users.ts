@@ -35,24 +35,7 @@ export const Permission = {
   ROLES_DELETE: 'roles:delete',
 } as const;
 
-export interface User {
-  id: number;
-  email: string;
-  roles: string[];
-  permissions: Record<string, boolean>;
-  createdAt: string;
-  updatedAt: string;
-}
 
-export interface CreateUserDto {
-  email: string;
-  password: string;
-  roles?: string[];
-}
-
-export interface UpdateUserDto {
-  roles?: string[];
-}
 
 export const usersApi = {
   create: async (data: CreateUserDto): Promise<User> => {
@@ -130,4 +113,4 @@ export const usersApi = {
       );
     }
   }
-}; 
+};

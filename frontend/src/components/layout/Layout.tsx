@@ -1,19 +1,14 @@
 import React from 'react';
 import { Layout as AntLayout, Menu, Button, Space, Avatar, Dropdown } from 'antd';
-import { Grid } from 'antd';
-const { useBreakpoint } = Grid;
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
   FileOutlined,
   UserOutlined,
   LogoutOutlined,
-  MenuFoldOutlined,
-  MenuUnfoldOutlined,
 } from '@ant-design/icons';
 import { useSessionStore } from '../../store/session';
 
-const { Header, Content, Sider } = AntLayout;
-
+const { Header, Content } = AntLayout;
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -22,7 +17,6 @@ export const Layout: React.FC<LayoutProps> = ({ children }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useSessionStore();
-  const screens = useBreakpoint();
 
   const handleLogout = () => {
     logout();

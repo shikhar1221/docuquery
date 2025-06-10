@@ -12,6 +12,7 @@ interface SessionState {
   isLoading: boolean;
   error: string | null;
   setSession: (user: User | null, accessToken: string | null, refreshToken: string | null) => void;
+  setError: (error: string | null) => void;
   updateAccessToken: (accessToken: string) => void;
   clearSession: () => void;
   hasRole: (role: Role) => boolean;
@@ -72,6 +73,7 @@ export const useSessionStore = create<SessionStore>()(
           isAuthenticated: false,
         }),
       setLoading: (isLoading: boolean) => set({ isLoading }),
+      setError: (error: string | null) => set({ error }),
     }),
     {
       name: 'session-storage',

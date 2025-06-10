@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { documentsApi } from '../../api/documents';
 
 interface DocumentIngestionStatusProps {
-  documentId: string;
+  documentId: number;
   status: 'pending' | 'processing' | 'completed' | 'failed';
   error?: string;
 }
@@ -79,4 +79,4 @@ export const DocumentIngestionStatus = ({
       )}
     </div>
   );
-}; 
+};

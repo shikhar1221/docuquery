@@ -2,12 +2,10 @@ import { useState, useCallback } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { documentsApi } from '../api/documents';
 import type { Document, UpdateDocumentDto, CreateDocumentDto } from '../types/document';
-import { useSessionStore } from '../store/session';
 
 export const useDocuments = () => {
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
-  const { user } = useSessionStore();
 
   const { data: documents = [], isLoading } = useQuery<Document[]>({
     queryKey: ['documents'],

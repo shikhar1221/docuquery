@@ -8,7 +8,7 @@ export interface LoginCredentials {
 export interface RegisterData {
   email: string;
   password: string;
-  roles?: Role[];
+  roles: Role[];
 }
 
 export interface AuthResponse {
@@ -26,4 +26,4 @@ export interface AuthResponse {
 
 export interface RefreshTokenResponse {
   accessToken: string;
-} 
+}

@@ -1,9 +1,9 @@
-import { useAuth } from '../hooks/useAuth';
 import { Link } from 'react-router-dom';
-import type { Role } from '../types/auth';
+import type { Role } from '../types/roles';
+import { useSessionStore } from '../store/session';
 
 export const DashboardPage = () => {
-  const { user, logout } = useAuth();
+  const { user } = useSessionStore();
 
   return (
     <>
